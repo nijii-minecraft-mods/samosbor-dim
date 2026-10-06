@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "samosbor_dim:block/portal_door" }
+  }
+}

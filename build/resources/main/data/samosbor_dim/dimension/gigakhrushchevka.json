@@ -1,0 +1,10 @@
+{
+  "type": "samosbor_dim:gigakhrushchevka",
+  "generator": {
+    "type": "samosbor_dim:gigakhrushchevka",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "minecraft:the_void"
+    }
+  }
+}
