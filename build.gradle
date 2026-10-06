@@ -1,0 +1,78 @@
+plugins {
+	id 'fabric-loom' version "${loom_version}"
+	id 'maven-publish'
+}
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    maven { url = "https://maven.nucleoid.xyz/" }
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"samosbor_dim" {
+			sourceSet sourceSets.main
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+    modImplementation include("eu.pb4:polymer-core:${project.polymer_version}")
+    modImplementation include("eu.pb4:polymer-blocks:${project.polymer_version}")
+    modImplementation include("eu.pb4:polymer-resource-pack:${project.polymer_version}")
+}
+
+processResources {
+	def version = project.version
+	def minecraft_version = project.minecraft_version
+	def loader_version = project.loader_version
+
+	inputs.property "version", version
+	inputs.property "minecraft_version", minecraft_version
+	inputs.property "loader_version", loader_version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": version,
+				"minecraft_version": minecraft_version,
+				"loader_version": loader_version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+}
+
+java {
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+	def projectName = project.archives_base_name
+	inputs.property "projectName", projectName
+
+	from("LICENSE") {
+		rename { "${it}_$projectName"}
+	}
+}
+
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			from components.java
+		}
+	}
+}
